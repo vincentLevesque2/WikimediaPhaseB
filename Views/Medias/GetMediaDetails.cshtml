@@ -1,0 +1,82 @@
+﻿@using DAL;
+@model Models.Media
+
+
+@if (Model != null)
+{
+
+
+
+    string path = DB.Users.Get(Model.OwnerId).Avatar;
+    string nom = DB.Users.Get(Model.OwnerId).Name;
+    bool userIsAdmin = Models.User.ConnectedUser.IsAdmin;
+    bool userIsOwner = Model.OwnerId == Models.User.ConnectedUser.Id;
+
+    if (!Model.Shared && !(userIsAdmin || userIsOwner))
+    {
+        <h3>
+            cette vidéo n'est plus partagée
+        </h3>
+    }
+
+    else
+    {
+        <dl>
+            @if ((userIsAdmin || userIsOwner) && Model.Shared)
+            {
+                <dd>
+                    <span style="color:grey">[Partagé]</span>
+                </dd>
+            }
+
+            <dd>
+                @Model.Title
+            </dd>
+            <dd>
+                @Helper.YoutubePlayer(Model.YoutubeId)
+            </dd>
+            <dd class="description">
+                @Model.Description
+            </dd>
+            <dt>
+                Catégorie
+            </dt>
+
+            <dd>
+                @Model.Category
+            </dd>
+
+            <dt>
+                Date de publication
+            </dt>
+
+            <dd>
+                @Helper.When(Model.PublishDate)
+            </dd>
+
+
+            <dt>
+                Ajouté par
+            </dt>
+            <dd class="owner" ownerid="3">
+                <div class="userItem">
+                    <div class="UserMediumAvatar" style="background: url(@path)"></div>
+                    <div class="ellipsis">@nom</div>
+                </div>
+
+            </dd>
+
+        </dl>
+
+    }
+}
+else
+{
+    <h3>
+        cette vidéo a été effacée
+    </h3>
+}
+
+
+
+
